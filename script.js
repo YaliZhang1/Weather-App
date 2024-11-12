@@ -55,24 +55,39 @@ function getWeatherData(data) {
   return weatherInfoBox; //must return!
 }
 
-function saveToHistory(data) {
-  const historyList = document.getElementById("history-list");
+const historyList = document.getElementById("history-list");
 
+//检查是否有相同名字的城市
+function isCityRenderedInHistory(data) {
+  const cities = [...historyList.children];
+  const exists = cities.find((city) => {
+    console.log(city.dataset);
+    return data.name === city.dataset.name;
+  });
+  return exists;
+}
+function saveToHistory(data) {
   // 检查是否已有该城市记录
-  if (!localStorage.getItem(data.name)) {
-    const historyCard = document.createElement("div");
-    historyCard.className = "history-card";
-    historyCard.innerHTML = `
+  //if (!localStorage.getItem(data.name)) {
+  const isRendered = isCityRenderedInHistory(data);
+  if (isRendered) {
+    return;
+  }
+  const historyCard = document.createElement("div");
+  historyCard.className = "history-card";
+  historyCard.setAttribute("data-city", data.name);
+  historyCard.setAttribute("data-country", data.sys.country);
+  historyCard.innerHTML = `
             <h3>${data.name}, ${data.sys.country}</h3>
             <p>Temperature: ${Math.round(data.main.temp)}°C</p>
             <p>Weather: ${data.weather[0].description}</p>
             <button onclick="removeFromHistory('${data.name}')">Remove</button>
         `;
 
-    historyList.appendChild(historyCard);
-    // 保存到 localStorage
-    localStorage.setItem(data.name, JSON.stringify(data));
-  }
+  historyList.appendChild(historyCard);
+  // 保存到 localStorage
+  localStorage.setItem(data.name, JSON.stringify(data));
+  //}
 }
 function removeFromHistory(cityName) {
   const historyList = document.getElementById("history-list");
