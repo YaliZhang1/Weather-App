@@ -27,7 +27,9 @@ body {
   text-align: center;
   width: 750px;
 }
-
+.container > h1 {
+  padding-top: 5rem;
+}
 h1 {
   color: var(--main-buttons-color);
 }
